@@ -1,5 +1,5 @@
 // Гүүр: keeps the app shell available offline. Translations still need the internet.
-const CACHE = "guur-v3";
+const CACHE = "guur-v4";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 const SDK = "https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.133.0/";
 
