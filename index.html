@@ -191,6 +191,10 @@ svg { flex: none; }
 .cats::-webkit-scrollbar { display: none; }
 .cat { flex: none; height: 36px; padding: 0 14px; border-radius: 999px; background: var(--surface); box-shadow: var(--shadow); font-size: 14.5px; font-weight: 600; color: var(--muted); }
 .cat[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.psearch { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); color: var(--faint); }
+.psearch svg { width: 18px; height: 18px; }
+.psearch input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 16px; color: var(--ink); }
+.cat .n { font-weight: 500; opacity: .6; margin-left: 4px; font-size: 12.5px; }
 
 /* ---------- talk ---------- */
 .talk-hint { margin: 0; font-size: 14.5px; color: var(--muted); }
@@ -423,6 +427,7 @@ svg { flex: none; }
     <button type="button" role="tab" data-seg="fav" aria-selected="false">Хадгалсан</button>
     <button type="button" role="tab" data-seg="his" aria-selected="false">Түүх</button>
   </div>
+  <div id="psearchWrap" class="psearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><label class="sr" for="psearch">Хэллэг хайх</label><input id="psearch" type="search" placeholder="Хэллэг хайх · 搜索" autocomplete="off" enterkeyhint="search"></div>
   <div id="cats" class="cats" role="toolbar" aria-label="Ангилал"></div>
   <ul id="plist" class="list"></ul>
   <p id="pEmpty" class="empty" hidden></p>
@@ -503,7 +508,7 @@ svg { flex: none; }
     <div class="box">
       <button id="wipeBtn" class="danger-btn" type="button">Түүх ба хадгалснаа устгах</button>
     </div>
-    <p class="foot">Түлхүүр, түүх, хадгалсан зүйлс зөвхөн энэ утсанд хадгалагдана. Хувилбар 3.2</p>
+    <p class="foot">Түлхүүр, түүх, хадгалсан зүйлс зөвхөн энэ утсанд хадгалагдана. Хувилбар 3.3</p>
   </div>
 </section>
 
@@ -600,45 +605,180 @@ svg { flex: none; }
     { id: "go", label: "Тээвэр" },
     { id: "food", label: "Хоол" },
     { id: "shop", label: "Дэлгүүр" },
+    { id: "trade", label: "Бөөний худалдаа" },
     { id: "stay", label: "Буудал" },
+    { id: "money", label: "Мөнгө, утас" },
+    { id: "num", label: "Тоо, цаг" },
+    { id: "health", label: "Эрүүл мэнд" },
     { id: "sos", label: "Яаралтай" }
   ];
   const PHRASES = [
     ["greet", "Сайн байна уу?", "Hello!", "你好！", "你好！", "Nǐ hǎo!"],
+    ["greet", "Өглөөний мэнд.", "Good morning.", "早上好。", "早上好。", "Zǎoshang hǎo."],
+    ["greet", "Оройн мэнд.", "Good evening.", "晚上好。", "晚上好。", "Wǎnshang hǎo."],
     ["greet", "Баярлалаа.", "Thank you.", "谢谢。", "謝謝。", "Xièxie."],
+    ["greet", "Маш их баярлалаа.", "Thank you very much.", "非常感谢。", "非常感謝。", "Fēicháng gǎnxiè."],
+    ["greet", "Зүгээр ээ.", "You're welcome.", "不客气。", "不客氣。", "Bú kèqi."],
     ["greet", "Уучлаарай.", "Excuse me.", "不好意思。", "不好意思。", "Bù hǎoyìsi."],
+    ["greet", "Өршөөгөөрэй.", "I'm sorry.", "对不起。", "對不起。", "Duìbuqǐ."],
+    ["greet", "Танилцсандаа таатай байна.", "Nice to meet you.", "很高兴认识你。", "很高興認識你。", "Hěn gāoxìng rènshi nǐ."],
+    ["greet", "Миний нэр ...", "My name is ...", "我叫……", "我叫……", "Wǒ jiào ..."],
+    ["greet", "Таны нэр хэн бэ?", "What is your name?", "你叫什么名字？", "你叫什麼名字？", "Nǐ jiào shénme míngzi?"],
     ["greet", "Би Монголоос ирсэн.", "I'm from Mongolia.", "我来自蒙古国。", "我來自蒙古國。", "Wǒ láizì Měnggǔguó."],
+    ["greet", "Тийм.", "Yes.", "是的。", "是的。", "Shì de."],
+    ["greet", "Үгүй.", "No.", "不是。", "不是。", "Bú shì."],
+    ["greet", "За, болно.", "OK.", "好的。", "好的。", "Hǎo de."],
     ["greet", "Баяртай.", "Goodbye.", "再见。", "再見。", "Zàijiàn."],
+    ["greet", "Сайн яваарай.", "Take care.", "保重。", "保重。", "Bǎozhòng."],
     ["talk", "Би хятадаар ярьдаггүй.", "I don't speak Chinese.", "我不会说中文。", "我不會說中文。", "Wǒ bú huì shuō Zhōngwén."],
     ["talk", "Та англиар ярьдаг уу?", "Do you speak English?", "你会说英语吗？", "你會說英語嗎？", "Nǐ huì shuō Yīngyǔ ma?"],
+    ["talk", "Монгол хэлтэй хүн байна уу?", "Is there anyone who speaks Mongolian?", "有人会说蒙古语吗？", "有人會說蒙古語嗎？", "Yǒu rén huì shuō Měnggǔyǔ ma?"],
     ["talk", "Би ойлгохгүй байна.", "I don't understand.", "我听不懂。", "我聽不懂。", "Wǒ tīng bù dǒng."],
+    ["talk", "Та ойлгосон уу?", "Do you understand?", "你明白吗？", "你明白嗎？", "Nǐ míngbai ma?"],
     ["talk", "Дахин хэлнэ үү.", "Please say it again.", "请再说一遍。", "請再說一遍。", "Qǐng zài shuō yí biàn."],
     ["talk", "Удаан ярина уу.", "Please speak slowly.", "请说慢一点。", "請說慢一點。", "Qǐng shuō màn yìdiǎn."],
     ["talk", "Энэ утсанд бичиж өгнө үү.", "Please type it on this phone.", "请在这个手机上打字。", "請在這個手機上打字。", "Qǐng zài zhège shǒujī shang dǎzì."],
+    ["talk", "Энд бичиж өгнө үү.", "Please write it here.", "请写在这里。", "請寫在這裡。", "Qǐng xiě zài zhèlǐ."],
+    ["talk", "Энэ хятадаар юу гэдэг вэ?", "What is this called in Chinese?", "这个用中文怎么说？", "這個用中文怎麼說？", "Zhège yòng Zhōngwén zěnme shuō?"],
+    ["talk", "Надад орчуулагч хэрэгтэй.", "I need an interpreter.", "我需要翻译。", "我需要翻譯。", "Wǒ xūyào fānyì."],
+    ["talk", "Түр хүлээгээрэй.", "Please wait a moment.", "请稍等。", "請稍等。", "Qǐng shāo děng."],
+    ["talk", "Мэдэхгүй.", "I don't know.", "我不知道。", "我不知道。", "Wǒ bù zhīdào."],
+    ["talk", "Асуудалгүй.", "No problem.", "没问题。", "沒問題。", "Méi wèntí."],
+    ["talk", "Надад тусалж чадах уу?", "Can you help me?", "你能帮我吗？", "你能幫我嗎？", "Nǐ néng bāng wǒ ma?"],
+    ["talk", "Зураг авч болох уу?", "May I take a photo?", "可以拍照吗？", "可以拍照嗎？", "Kěyǐ pāizhào ma?"],
     ["go", "Энэ хаяг руу хүргэж өгнө үү.", "Please take me to this address.", "请带我去这个地址。", "請帶我去這個地址。", "Qǐng dài wǒ qù zhège dìzhǐ."],
+    ["go", "Такси дуудаж өгнө үү.", "Please call a taxi for me.", "请帮我叫一辆出租车。", "請幫我叫一輛出租車。", "Qǐng bāng wǒ jiào yí liàng chūzūchē."],
+    ["go", "Энд очиход хэд вэ?", "How much to go here?", "去这里多少钱？", "去這裡多少錢？", "Qù zhèlǐ duōshǎo qián?"],
+    ["go", "Хэр удаан явах вэ?", "How long does it take?", "要多长时间？", "要多長時間？", "Yào duō cháng shíjiān?"],
+    ["go", "Хэр хол вэ?", "How far is it?", "有多远？", "有多遠？", "Yǒu duō yuǎn?"],
+    ["go", "Баруун тийш эргэнэ үү.", "Turn right, please.", "请右转。", "請右轉。", "Qǐng yòu zhuǎn."],
+    ["go", "Зүүн тийш эргэнэ үү.", "Turn left, please.", "请左转。", "請左轉。", "Qǐng zuǒ zhuǎn."],
+    ["go", "Чигээрээ явна уу.", "Go straight, please.", "请直走。", "請直走。", "Qǐng zhí zǒu."],
+    ["go", "Энд зогсоно уу.", "Please stop here.", "请在这里停车。", "請在這裡停車。", "Qǐng zài zhèlǐ tíngchē."],
+    ["go", "Арай удаан явна уу.", "Please drive slower.", "请开慢一点。", "請開慢一點。", "Qǐng kāi màn yìdiǎn."],
+    ["go", "Би яарч байна.", "I'm in a hurry.", "我赶时间。", "我趕時間。", "Wǒ gǎn shíjiān."],
     ["go", "Метроны буудал хаана байдаг вэ?", "Where is the subway station?", "地铁站在哪里？", "地鐵站在哪裡？", "Dìtiě zhàn zài nǎlǐ?"],
+    ["go", "Автобусны буудал хаана байдаг вэ?", "Where is the bus stop?", "公交车站在哪里？", "公交車站在哪裡？", "Gōngjiāochē zhàn zài nǎlǐ?"],
+    ["go", "Энэ автобус хаашаа явдаг вэ?", "Where does this bus go?", "这辆公交车去哪里？", "這輛公交車去哪裡？", "Zhè liàng gōngjiāochē qù nǎlǐ?"],
     ["go", "Тасалбар хаанаас авах вэ?", "Where can I buy a ticket?", "在哪里买票？", "在哪裡買票？", "Zài nǎlǐ mǎi piào?"],
     ["go", "Галт тэрэгний буудал руу явмаар байна.", "I want to go to the train station.", "我想去火车站。", "我想去火車站。", "Wǒ xiǎng qù huǒchē zhàn."],
+    ["go", "Энэ галт тэрэг Бээжин рүү явах уу?", "Does this train go to Beijing?", "这趟火车去北京吗？", "這趟火車去北京嗎？", "Zhè tàng huǒchē qù Běijīng ma?"],
+    ["go", "Би энэ буудал дээр бууна.", "I get off at this stop.", "我在这一站下车。", "我在這一站下車。", "Wǒ zài zhè yí zhàn xiàchē."],
     ["go", "Нисэх онгоцны буудал руу явна уу.", "To the airport, please.", "请去机场。", "請去機場。", "Qǐng qù jīchǎng."],
-    ["go", "Энд зогсоно уу.", "Please stop here.", "请在这里停车。", "請在這裡停車。", "Qǐng zài zhèlǐ tíngchē."],
-    ["go", "Хэр хол вэ?", "How far is it?", "有多远？", "有多遠？", "Yǒu duō yuǎn?"],
+    ["go", "Бүртгэлийн ширээ хаана байдаг вэ?", "Where is the check-in counter?", "值机柜台在哪里？", "值機櫃檯在哪裡？", "Zhíjī guìtái zài nǎlǐ?"],
+    ["go", "Эрээн рүү явмаар байна.", "I want to go to Erenhot.", "我想去二连浩特。", "我想去二連浩特。", "Wǒ xiǎng qù Èrliánhàotè."],
+    ["go", "Хөх хот руу явмаар байна.", "I want to go to Hohhot.", "我想去呼和浩特。", "我想去呼和浩特。", "Wǒ xiǎng qù Hūhéhàotè."],
+    ["food", "Хоёр хүний ширээ байна уу?", "A table for two?", "有两个人的位子吗？", "有兩個人的位子嗎？", "Yǒu liǎng ge rén de wèizi ma?"],
     ["food", "Цэс өгнө үү.", "The menu, please.", "请给我菜单。", "請給我菜單。", "Qǐng gěi wǒ càidān."],
+    ["food", "Танай хамгийн алдартай хоол юу вэ?", "What is your most popular dish?", "你们的招牌菜是什么？", "你們的招牌菜是什麼？", "Nǐmen de zhāopái cài shì shénme?"],
+    ["food", "Би үүнийг захиалъя.", "I'd like to order this.", "我要点这个。", "我要點這個。", "Wǒ yào diǎn zhège."],
+    ["food", "Үхрийн махтай хоол байна уу?", "Do you have beef dishes?", "有牛肉的菜吗？", "有牛肉的菜嗎？", "Yǒu niúròu de cài ma?"],
+    ["food", "Хонины мах байна уу?", "Do you have lamb?", "有羊肉吗？", "有羊肉嗎？", "Yǒu yángròu ma?"],
     ["food", "Би мах иддэггүй.", "I don't eat meat.", "我不吃肉。", "我不吃肉。", "Wǒ bù chī ròu."],
+    ["food", "Би гахайн мах иддэггүй.", "I don't eat pork.", "我不吃猪肉。", "我不吃豬肉。", "Wǒ bù chī zhūròu."],
+    ["food", "Энэ халуун ногоотой юу?", "Is this spicy?", "这个辣不辣？", "這個辣不辣？", "Zhège là bu là?"],
     ["food", "Хэт халуун ногоотой битгий хийгээрэй.", "Not too spicy, please.", "请不要太辣。", "請不要太辣。", "Qǐng búyào tài là."],
+    ["food", "Чинжүү хийхгүй байгаарай.", "No chili, please.", "请不要放辣椒。", "請不要放辣椒。", "Qǐng búyào fàng làjiāo."],
+    ["food", "Би газрын самарт харшилтай.", "I'm allergic to peanuts.", "我对花生过敏。", "我對花生過敏。", "Wǒ duì huāshēng guòmǐn."],
     ["food", "Ус өгнө үү.", "Water, please.", "请给我一杯水。", "請給我一杯水。", "Qǐng gěi wǒ yì bēi shuǐ."],
+    ["food", "Цай өгнө үү.", "Tea, please.", "请给我茶。", "請給我茶。", "Qǐng gěi wǒ chá."],
+    ["food", "Кофе байна уу?", "Do you have coffee?", "有咖啡吗？", "有咖啡嗎？", "Yǒu kāfēi ma?"],
+    ["food", "Халбага өгнө үү.", "A spoon, please.", "请给我一个勺子。", "請給我一個勺子。", "Qǐng gěi wǒ yí ge sháozi."],
+    ["food", "Сэрээ, хутга байна уу?", "Do you have a fork and knife?", "有刀叉吗？", "有刀叉嗎？", "Yǒu dāochā ma?"],
+    ["food", "Маш амттай байна.", "It's delicious.", "很好吃。", "很好吃。", "Hěn hǎochī."],
+    ["food", "Савлаж өгнө үү.", "To take away, please.", "打包。", "打包。", "Dǎbāo."],
     ["food", "Тооцоогоо хиймээр байна.", "The bill, please.", "请结账。", "請結帳。", "Qǐng jiézhàng."],
     ["shop", "Энэ хэд вэ?", "How much is this?", "这个多少钱？", "這個多少錢？", "Zhège duōshǎo qián?"],
     ["shop", "Энэ юу вэ?", "What is this?", "这是什么？", "這是什麼？", "Zhè shì shénme?"],
+    ["shop", "Хэтэрхий үнэтэй байна.", "It's too expensive.", "太贵了。", "太貴了。", "Tài guì le."],
     ["shop", "Хямдруулж болох уу?", "Can you make it cheaper?", "可以便宜一点吗？", "可以便宜一點嗎？", "Kěyǐ piányi yìdiǎn ma?"],
-    ["shop", "Картаар төлж болох уу?", "Can I pay by card?", "可以刷卡吗？", "可以刷卡嗎？", "Kěyǐ shuākǎ ma?"],
+    ["shop", "Хамгийн хямддаа хэд вэ?", "What's your lowest price?", "最低多少钱？", "最低多少錢？", "Zuì dī duōshǎo qián?"],
+    ["shop", "Зүгээр л харж байна.", "I'm just looking.", "我只是看看。", "我只是看看。", "Wǒ zhǐshì kànkan."],
+    ["shop", "Өөр өнгө байна уу?", "Do you have other colors?", "有别的颜色吗？", "有別的顏色嗎？", "Yǒu bié de yánsè ma?"],
+    ["shop", "Арай том нь байна уу?", "Do you have a bigger one?", "有大一点的吗？", "有大一點的嗎？", "Yǒu dà yìdiǎn de ma?"],
+    ["shop", "Арай жижиг нь байна уу?", "Do you have a smaller one?", "有小一点的吗？", "有小一點的嗎？", "Yǒu xiǎo yìdiǎn de ma?"],
+    ["shop", "Өмсөж үзэж болох уу?", "Can I try it on?", "可以试穿吗？", "可以試穿嗎？", "Kěyǐ shìchuān ma?"],
     ["shop", "Би үүнийг авъя.", "I'll take this.", "我要这个。", "我要這個。", "Wǒ yào zhège."],
+    ["shop", "Картаар төлж болох уу?", "Can I pay by card?", "可以刷卡吗？", "可以刷卡嗎？", "Kěyǐ shuākǎ ma?"],
+    ["shop", "WeChat-аар төлж болох уу?", "Can I pay with WeChat?", "可以用微信支付吗？", "可以用微信支付嗎？", "Kěyǐ yòng Wēixìn zhīfù ma?"],
+    ["shop", "Alipay-аар төлж болох уу?", "Can I pay with Alipay?", "可以用支付宝吗？", "可以用支付寶嗎？", "Kěyǐ yòng Zhīfùbǎo ma?"],
+    ["shop", "Бэлнээр төлье.", "I'll pay in cash.", "我付现金。", "我付現金。", "Wǒ fù xiànjīn."],
+    ["shop", "Баримт өгнө үү.", "Receipt, please.", "请给我发票。", "請給我發票。", "Qǐng gěi wǒ fāpiào."],
+    ["shop", "Уут өгнө үү.", "A bag, please.", "请给我一个袋子。", "請給我一個袋子。", "Qǐng gěi wǒ yí ge dàizi."],
+    ["shop", "Буцааж болох уу?", "Can I return it?", "可以退货吗？", "可以退貨嗎？", "Kěyǐ tuìhuò ma?"],
+    ["trade", "Бөөний үнэ хэд вэ?", "What is the wholesale price?", "批发价是多少？", "批發價是多少？", "Pīfā jià shì duōshǎo?"],
+    ["trade", "Хамгийн багадаа хэдийг авах ёстой вэ?", "What is the minimum order quantity?", "最少要买多少？", "最少要買多少？", "Zuìshǎo yào mǎi duōshǎo?"],
+    ["trade", "Би зуун ширхэг авна.", "I'll take 100 pieces.", "我要一百个。", "我要一百個。", "Wǒ yào yìbǎi ge."],
+    ["trade", "Дээж байна уу?", "Do you have samples?", "有样品吗？", "有樣品嗎？", "Yǒu yàngpǐn ma?"],
+    ["trade", "Чанар нь ямар вэ?", "How is the quality?", "质量怎么样？", "質量怎麼樣？", "Zhìliàng zěnmeyàng?"],
+    ["trade", "Хэзээ бэлэн болох вэ?", "When will it be ready?", "什么时候能好？", "什麼時候能好？", "Shénme shíhou néng hǎo?"],
+    ["trade", "Монгол руу илгээж чадах уу?", "Can you ship to Mongolia?", "能发货到蒙古国吗？", "能發貨到蒙古國嗎？", "Néng fāhuò dào Měnggǔguó ma?"],
+    ["trade", "Тээврийн зардал хэд вэ?", "How much is the shipping?", "运费多少钱？", "運費多少錢？", "Yùnfèi duōshǎo qián?"],
+    ["trade", "Урьдчилгаа хэд вэ?", "How much is the deposit?", "定金是多少？", "定金是多少？", "Dìngjīn shì duōshǎo?"],
+    ["trade", "Үнийн санал явуулна уу.", "Please send me a quotation.", "请给我报价。", "請給我報價。", "Qǐng gěi wǒ bàojià."],
+    ["trade", "Танай үйлдвэр хаана байдаг вэ?", "Where is your factory?", "你们的工厂在哪里？", "你們的工廠在哪裡？", "Nǐmen de gōngchǎng zài nǎlǐ?"],
+    ["trade", "Гэрээ байгуулъя.", "Let's sign a contract.", "我们签合同吧。", "我們簽合同吧。", "Wǒmen qiān hétong ba."],
+    ["trade", "WeChat-аа өгөөч.", "Can I add you on WeChat?", "可以加你的微信吗？", "可以加你的微信嗎？", "Kěyǐ jiā nǐ de Wēixìn ma?"],
+    ["stay", "Сул өрөө байна уу?", "Do you have a room?", "有房间吗？", "有房間嗎？", "Yǒu fángjiān ma?"],
     ["stay", "Би өрөө захиалсан.", "I have a reservation.", "我有预订。", "我有預訂。", "Wǒ yǒu yùdìng."],
-    ["stay", "Жорлон хаана байдаг вэ?", "Where is the restroom?", "洗手间在哪里？", "洗手間在哪裡？", "Xǐshǒujiān zài nǎlǐ?"],
+    ["stay", "Нэг хоног хэд вэ?", "How much per night?", "一晚多少钱？", "一晚多少錢？", "Yì wǎn duōshǎo qián?"],
+    ["stay", "Өглөөний цай багтсан уу?", "Is breakfast included?", "含早餐吗？", "含早餐嗎？", "Hán zǎocān ma?"],
     ["stay", "Wi-Fi-ийн нууц үг юу вэ?", "What is the Wi-Fi password?", "Wi-Fi密码是多少？", "Wi-Fi密碼是多少？", "Wi-Fi mìmǎ shì duōshǎo?"],
+    ["stay", "Жорлон хаана байдаг вэ?", "Where is the restroom?", "洗手间在哪里？", "洗手間在哪裡？", "Xǐshǒujiān zài nǎlǐ?"],
+    ["stay", "Халуун ус гарахгүй байна.", "There is no hot water.", "没有热水。", "沒有熱水。", "Méiyǒu rèshuǐ."],
+    ["stay", "Агааржуулагч эвдэрсэн байна.", "The air conditioner is broken.", "空调坏了。", "空調壞了。", "Kōngtiáo huài le."],
+    ["stay", "Өрөөг цэвэрлэж өгнө үү.", "Please clean the room.", "请打扫房间。", "請打掃房間。", "Qǐng dǎsǎo fángjiān."],
+    ["stay", "Нэг алчуур нэмж өгнө үү.", "One more towel, please.", "请再给我一条毛巾。", "請再給我一條毛巾。", "Qǐng zài gěi wǒ yì tiáo máojīn."],
+    ["stay", "Өрөөний картаа гээчихлээ.", "I lost my room card.", "我的房卡丢了。", "我的房卡丟了。", "Wǒ de fángkǎ diū le."],
+    ["stay", "Ачаагаа энд үлдээж болох уу?", "Can I leave my luggage here?", "可以寄存行李吗？", "可以寄存行李嗎？", "Kěyǐ jìcún xíngli ma?"],
+    ["stay", "Хэдэн цагт өрөөгөө өгөх вэ?", "What time is check-out?", "几点退房？", "幾點退房？", "Jǐ diǎn tuìfáng?"],
+    ["stay", "Би өрөөгөө өгье.", "I'd like to check out.", "我要退房。", "我要退房。", "Wǒ yào tuìfáng."],
+    ["money", "Мөнгө хаана солих вэ?", "Where can I exchange money?", "在哪里换钱？", "在哪裡換錢？", "Zài nǎlǐ huàn qián?"],
+    ["money", "Ханш хэд вэ?", "What is the exchange rate?", "汇率是多少？", "匯率是多少？", "Huìlǜ shì duōshǎo?"],
+    ["money", "Бэлэн мөнгөний машин хаана байдаг вэ?", "Where is an ATM?", "哪里有取款机？", "哪裡有取款機？", "Nǎlǐ yǒu qǔkuǎnjī?"],
+    ["money", "Миний карт ажиллахгүй байна.", "My card doesn't work.", "我的卡不能用。", "我的卡不能用。", "Wǒ de kǎ bù néng yòng."],
+    ["money", "Сим карт хаанаас авах вэ?", "Where can I buy a SIM card?", "在哪里买电话卡？", "在哪裡買電話卡？", "Zài nǎlǐ mǎi diànhuàkǎ?"],
+    ["money", "Утсаа цэнэглэж болох уу?", "Can I charge my phone?", "可以给手机充电吗？", "可以給手機充電嗎？", "Kěyǐ gěi shǒujī chōngdiàn ma?"],
+    ["money", "Wi-Fi байна уу?", "Is there Wi-Fi?", "有Wi-Fi吗？", "有Wi-Fi嗎？", "Yǒu Wi-Fi ma?"],
+    ["money", "Таны утасны дугаар хэд вэ?", "What is your phone number?", "你的电话号码是多少？", "你的電話號碼是多少？", "Nǐ de diànhuà hàomǎ shì duōshǎo?"],
+    ["money", "Над руу залгаарай.", "Please call me.", "请给我打电话。", "請給我打電話。", "Qǐng gěi wǒ dǎ diànhuà."],
+    ["money", "Хаягаа бичиж өгнө үү.", "Please write down the address.", "请把地址写下来。", "請把地址寫下來。", "Qǐng bǎ dìzhǐ xiě xiàlai."],
+    ["num", "Одоо хэдэн цаг болж байна?", "What time is it now?", "现在几点了？", "現在幾點了？", "Xiànzài jǐ diǎn le?"],
+    ["num", "Өнөөдөр хэдэн бэ?", "What is the date today?", "今天几号？", "今天幾號？", "Jīntiān jǐ hào?"],
+    ["num", "Хэдэн цагт нээдэг вэ?", "What time do you open?", "几点开门？", "幾點開門？", "Jǐ diǎn kāimén?"],
+    ["num", "Хэдэн цагт хаадаг вэ?", "What time do you close?", "几点关门？", "幾點關門？", "Jǐ diǎn guānmén?"],
+    ["num", "Арван минутын дараа", "In ten minutes", "十分钟以后", "十分鐘以後", "Shí fēnzhōng yǐhòu"],
+    ["num", "Маргааш уулзъя.", "See you tomorrow.", "明天见。", "明天見。", "Míngtiān jiàn."],
+    ["num", "Өчигдөр / Өнөөдөр / Маргааш", "Yesterday / today / tomorrow", "昨天／今天／明天", "昨天／今天／明天", "Zuótiān / jīntiān / míngtiān"],
+    ["num", "Нэг, хоёр, гурав, дөрөв, тав", "One, two, three, four, five", "一、二、三、四、五", "一、二、三、四、五", "Yī, èr, sān, sì, wǔ"],
+    ["num", "Зургаа, долоо, найм, ес, арав", "Six, seven, eight, nine, ten", "六、七、八、九、十", "六、七、八、九、十", "Liù, qī, bā, jiǔ, shí"],
+    ["num", "Зуу", "One hundred", "一百", "一百", "Yìbǎi"],
+    ["num", "Мянга", "One thousand", "一千", "一千", "Yìqiān"],
+    ["health", "Би өвдсөн байна.", "I'm sick.", "我生病了。", "我生病了。", "Wǒ shēngbìng le."],
+    ["health", "Толгой өвдөж байна.", "I have a headache.", "我头疼。", "我頭疼。", "Wǒ tóu téng."],
+    ["health", "Гэдэс өвдөж байна.", "I have a stomachache.", "我肚子疼。", "我肚子疼。", "Wǒ dùzi téng."],
+    ["health", "Би халуурч байна.", "I have a fever.", "我发烧了。", "我發燒了。", "Wǒ fāshāo le."],
+    ["health", "Ханиалгаж байна.", "I have a cough.", "我咳嗽。", "我咳嗽。", "Wǒ késou."],
+    ["health", "Эмийн сан хаана байдаг вэ?", "Where is a pharmacy?", "药店在哪里？", "藥店在哪裡？", "Yàodiàn zài nǎlǐ?"],
+    ["health", "Ходоодны эм байна уу?", "Do you have stomach medicine?", "有胃药吗？", "有胃藥嗎？", "Yǒu wèiyào ma?"],
+    ["health", "Энэ эмийг өдөрт хэдэн удаа уух вэ?", "How many times a day should I take this medicine?", "这个药一天吃几次？", "這個藥一天吃幾次？", "Zhège yào yì tiān chī jǐ cì?"],
+    ["health", "Би антибиотикт харшилтай.", "I'm allergic to antibiotics.", "我对抗生素过敏。", "我對抗生素過敏。", "Wǒ duì kàngshēngsù guòmǐn."],
+    ["health", "Би чихрийн шижинтэй.", "I have diabetes.", "我有糖尿病。", "我有糖尿病。", "Wǒ yǒu tángniàobìng."],
+    ["health", "Эмч дуудаж өгнө үү.", "Please call a doctor.", "请帮我叫医生。", "請幫我叫醫生。", "Qǐng bāng wǒ jiào yīshēng."],
+    ["health", "Түргэн тусламж дуудаарай!", "Call an ambulance!", "叫救护车！", "叫救護車！", "Jiào jiùhùchē!"],
     ["sos", "Туслаач!", "Help!", "救命！", "救命！", "Jiùmìng!"],
+    ["sos", "Надад тусламж хэрэгтэй.", "I need help.", "我需要帮助。", "我需要幫助。", "Wǒ xūyào bāngzhù."],
+    ["sos", "Цагдаа дуудаж өгнө үү.", "Please call the police.", "请帮我报警。", "請幫我報警。", "Qǐng bāng wǒ bàojǐng."],
+    ["sos", "Цагдаагийн хэлтэс хаана байдаг вэ?", "Where is the police station?", "派出所在哪里？", "派出所在哪裡？", "Pàichūsuǒ zài nǎlǐ?"],
     ["sos", "Эмнэлэг хаана байдаг вэ?", "Where is the hospital?", "医院在哪里？", "醫院在哪裡？", "Yīyuàn zài nǎlǐ?"],
     ["sos", "Би төөрчихлөө.", "I'm lost.", "我迷路了。", "我迷路了。", "Wǒ mílù le."],
-    ["sos", "Цагдаа дуудаж өгнө үү.", "Please call the police.", "请帮我报警。", "請幫我報警。", "Qǐng bāng wǒ bàojǐng."]
+    ["sos", "Хулгайч!", "Thief!", "小偷！", "小偷！", "Xiǎotōu!"],
+    ["sos", "Түрийвч минь алга болчихлоо.", "My wallet is missing.", "我的钱包丢了。", "我的錢包丟了。", "Wǒ de qiánbāo diū le."],
+    ["sos", "Паспорт минь алга болчихлоо.", "I lost my passport.", "我的护照丢了。", "我的護照丟了。", "Wǒ de hùzhào diū le."],
+    ["sos", "Утсыг минь хулгайлчихлаа.", "My phone was stolen.", "我的手机被偷了。", "我的手機被偷了。", "Wǒ de shǒujī bèi tōu le."],
+    ["sos", "Монгол Улсын Элчин сайдын яам хаана байдаг вэ?", "Where is the Mongolian embassy?", "蒙古国大使馆在哪里？", "蒙古國大使館在哪裡？", "Měnggǔguó dàshǐguǎn zài nǎlǐ?"],
+    ["sos", "Гал гарлаа!", "Fire!", "着火了！", "著火了！", "Zháohuǒ le!"],
+    ["sos", "Яаралтай гарц хаана байна?", "Where is the emergency exit?", "紧急出口在哪里？", "緊急出口在哪裡？", "Jǐnjí chūkǒu zài nǎlǐ?"]
   ].map(([cat, mn, en, zh, zht, py]) => ({ cat, mn, en, zh, zht, py }));
 
   const ERR = {
@@ -673,7 +813,7 @@ svg { flex: none; }
   };
   const old = store.get("settings", null);
   const S = Object.assign({
-    engine: "", apiKey: "", geminiKey: "", geminiModel: "", geminiSttModel: "", model: "claude-opus-5-5", dir: "mn-zh",
+    engine: "", apiKey: "", geminiKey: "", geminiModel: "", geminiSttModel: "", geminiTtsModel: "", model: "claude-opus-5-5", dir: "mn-zh",
     tone: "normal", speed: "quick", script: "simp", pinyin: true, showEn: true,
     rate: 0.9, enVoice: "", zhVoice: "", autoRead: false, talkRead: true, autoMic: true, tab: "translate"
   }, old && typeof old === "object" ? old : {});
@@ -810,7 +950,7 @@ svg { flex: none; }
 
   // Gemini: pick the newest stable Flash model this key can use, once. Flash-Lite only if no Flash is available.
   async function geminiModel(signal, kind) {
-    const prop = kind === "stt" ? "geminiSttModel" : "geminiModel";
+    const prop = kind === "stt" ? "geminiSttModel" : kind === "tts" ? "geminiTtsModel" : "geminiModel";
     if (S[prop]) return S[prop];
     let r;
     try { r = await fetch(GEMINI + "models?pageSize=1000", { headers: { "x-goog-api-key": S.geminiKey }, signal }); }
@@ -826,6 +966,12 @@ svg { flex: none; }
     const lite = names.filter(n => n.endsWith("-lite")).sort((a, b) => ver(b) - ver(a));
     S.geminiModel = flash[0] || lite[0] || "gemini-2.5-flash";
     S.geminiSttModel = flash[0] || lite[0] || "gemini-2.5-flash";
+    const tts = (j.models || [])
+      .filter(m => (m.supportedGenerationMethods || []).includes("generateContent"))
+      .map(m => String(m.name || "").replace(/^models\//, ""))
+      .filter(n => /^gemini-[\d.]+-.*tts$/.test(n))
+      .sort((a, b) => (ver(b) - ver(a)) || (/pro/.test(a) - /pro/.test(b)));
+    S.geminiTtsModel = tts[0] || "gemini-2.5-flash-preview-tts";
     save();
     return S[prop];
   }
@@ -887,6 +1033,49 @@ svg { flex: none; }
       if (signal) signal.removeEventListener("abort", onAbort);
     }
   }
+  // Text → speech with a Gemini TTS model. Returns a WAV blob.
+  async function geminiTts(text) {
+    if (!S.geminiKey) throw { code: "no_key" };
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 30000);
+    try {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const model = await geminiModel(ctrl.signal, "tts");
+        let r;
+        try {
+          r = await fetch(GEMINI + "models/" + model + ":generateContent", {
+            method: "POST", signal: ctrl.signal,
+            headers: { "x-goog-api-key": S.geminiKey, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ role: "user", parts: [{ text: "Say in Mongolian, clearly and naturally: " + text }] }],
+              generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } }
+            })
+          });
+        } catch (e) { throw { code: e && e.name === "AbortError" ? "timeout" : "network" }; }
+        if (r.status === 404 && attempt === 0) { S.geminiTtsModel = ""; save(); continue; }
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          const msg = (j.error && j.error.message) || "";
+          if (r.status === 429) throw { code: "rate_limited", detail: msg };
+          if (r.status === 401 || r.status === 403 || (r.status === 400 && /api key/i.test(msg))) throw { code: "bad_key", detail: msg };
+          throw { code: "upstream", detail: msg || ("HTTP " + r.status) };
+        }
+        const parts = (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || [];
+        const part = parts.find(x => x.inlineData || x.inline_data);
+        const inl = part && (part.inlineData || part.inline_data);
+        if (!inl || !inl.data) throw { code: "empty" };
+        const mime = String(inl.mimeType || inl.mime_type || "");
+        const bin = atob(inl.data);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        if (/wav/.test(mime)) return new Blob([bytes], { type: "audio/wav" });
+        const rate = parseInt((mime.match(/rate=(\d+)/) || [])[1], 10) || 24000;
+        return wavFromInt16(new Int16Array(bytes.buffer, 0, Math.floor(bytes.length / 2)), rate);
+      }
+      throw { code: "upstream" };
+    } finally { clearTimeout(timer); }
+  }
+
   async function geminiChain(text, dir, script, withPy, onUpdate, signal) {
     const r = await geminiGenerate([{ text: chainPrompt(text, dir, script, withPy) }], signal, "text", 60000);
     const p = parseChain(r.text);
@@ -966,10 +1155,44 @@ svg { flex: none; }
     updateVoiceFoot();
     syncSpeakButtons();
   }
+  const nativeMn = () => !!synth && voices.some(v => norm(v.lang).startsWith("mn"));
   function canSpeak(lang) {
-    if (!synth) return false;
-    if (lang === "mn") return voices.some(v => norm(v.lang).startsWith("mn"));
-    return true;
+    if (lang === "mn") return nativeMn() || !!S.geminiKey;
+    return !!synth;
+  }
+  // One shared <audio> element, unlocked by the first tap, so later playback is allowed on iPhone.
+  let player = null, playerReady = false;
+  const ttsCache = new Map();
+  function unlockPlayer() {
+    if (playerReady) return;
+    playerReady = true;
+    try {
+      player = new Audio();
+      player.src = URL.createObjectURL(wavFromInt16(new Int16Array(1600), 16000));
+      const p = player.play();
+      if (p && p.then) p.then(() => player.pause(), () => {});
+    } catch (e) {}
+  }
+  document.addEventListener("click", unlockPlayer, { capture: true });
+  document.addEventListener("touchend", unlockPlayer, { capture: true });
+  async function speakGemini(text, k) {
+    try {
+      let url = ttsCache.get(text);
+      if (!url) {
+        const blob = await geminiTts(text);
+        url = URL.createObjectURL(blob);
+        ttsCache.set(text, url);
+      }
+      if (speakingKey !== k) return;
+      if (!player) player = new Audio();
+      player.onended = player.onerror = () => { if (speakingKey === k) { speakingKey = null; syncSpeakButtons(); } };
+      player.src = url;
+      await player.play();
+    } catch (e) {
+      if (speakingKey === k) { speakingKey = null; syncSpeakButtons(); }
+      const code = e && e.code;
+      toast(code === "rate_limited" ? "Gemini-ийн үнэгүй хязгаар түр дууслаа. Хэсэг хүлээгээд дахин оролдоно уу." : code === "timeout" || code === "network" ? "Монгол хоолой ачаалж чадсангүй. Интернэтээ шалгана уу." : code === "bad_key" ? ERR.bad_key : "Монгол хоолойгоор уншиж чадсангүй. Дахин дарж үзнэ үү.");
+    }
   }
   function pickVoice(lang, script) {
     const want = lang === "en" ? S.enVoice : lang === "zh" ? S.zhVoice : "";
@@ -986,7 +1209,15 @@ svg { flex: none; }
   }
   document.addEventListener("pointerdown", unlockTts, { once: true, capture: true });
   function speak(text, lang, script, key) {
-    if (!synth || !text || !canSpeak(lang)) return;
+    if (!text || !canSpeak(lang)) return;
+    if (lang === "mn" && !nativeMn()) {
+      stopSpeaking();
+      speakingKey = key || "x";
+      syncSpeakButtons();
+      speakGemini(text, speakingKey);
+      return;
+    }
+    if (player) { try { player.pause(); } catch (e) {} }
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
     const v = pickVoice(lang, script);
@@ -1001,7 +1232,12 @@ svg { flex: none; }
     // iOS sometimes needs a moment after cancel() before it speaks again.
     setTimeout(() => { try { synth.speak(u); } catch (e) { done(); } }, 60);
   }
-  function stopSpeaking() { if (synth) synth.cancel(); speakingKey = null; syncSpeakButtons(); }
+  function stopSpeaking() {
+    if (synth) synth.cancel();
+    if (player) { try { player.pause(); } catch (e) {} }
+    speakingKey = null;
+    syncSpeakButtons();
+  }
   function updateVoiceFoot() {
     const f = $("voiceFoot");
     if (!synth) { f.textContent = "Энэ хөтөч дуут уншлага дэмждэггүй."; return; }
@@ -1157,7 +1393,7 @@ svg { flex: none; }
       this.timer = setInterval(() => { if (sid === this.session) this.setState("busy", Math.floor((Date.now() - busyT0) / 1000)); }, 1000);
       if (secs < 0.7) { this.fail("mic_short"); return; }
       let audio = null;
-      if (this.pcmLen > this.rate * 0.5 && this.loud < 0.004) { this.fail("silent"); return; }
+      if (this.pcmLen > this.rate * 0.5 && this.loud < 0.0015) { this.fail("silent"); return; }
       if (this.pcmLen > this.rate * 0.5) {
         audio = { mime: "audio/wav", blob: wavFromFloat(this.pcm, this.pcmLen, this.rate, 16000) };
       } else if (backup && backup.size > 1500) {
@@ -1652,23 +1888,31 @@ svg { flex: none; }
   function renderPhrases() {
     document.querySelectorAll("[data-seg]").forEach(b => b.setAttribute("aria-selected", String(b.dataset.seg === phraseSeg)));
     const cats = $("cats"), list = $("plist"), empty = $("pEmpty");
-    cats.hidden = phraseSeg !== "phr";
+    const q = phraseSeg === "phr" ? $("psearch").value.trim().toLowerCase() : "";
+    cats.hidden = phraseSeg !== "phr" || !!q;
+    $("psearchWrap").hidden = phraseSeg !== "phr";
     $("hisClear").hidden = !(phraseSeg === "his" && history.length);
     list.replaceChildren();
     if (phraseSeg === "phr") {
       cats.replaceChildren();
       CATS.forEach(c => {
         const b = el("button", "cat", c.label); b.type = "button";
+        b.append(el("span", "n", String(PHRASES.filter(p => p.cat === c.id).length)));
         b.setAttribute("aria-pressed", String(c.id === phraseCat));
         b.addEventListener("click", () => { phraseCat = c.id; renderPhrases(); });
         cats.append(b);
       });
       const trad = S.script === "trad";
-      PHRASES.filter(p => p.cat === phraseCat).forEach(p => {
+      const pool = q
+        ? PHRASES.filter(p => [p.mn, p.en, p.zh, p.zht, p.py].some(t => t.toLowerCase().includes(q)))
+        : PHRASES.filter(p => p.cat === phraseCat);
+      empty.textContent = "Олдсонгүй. Өөр үгээр хайж үзнэ үү.";
+      empty.hidden = pool.length > 0;
+      list.hidden = !pool.length;
+      pool.forEach(p => {
         const e = { dir: "mn-zh", src: p.mn, en: p.en, dst: trad ? p.zht : p.zh, py: p.py, script: trad ? "trad" : "simp" };
         list.append(entryRow(e, () => openBig(e)));
       });
-      list.hidden = false; empty.hidden = true;
       return;
     }
     const items = phraseSeg === "fav" ? favorites : history;
@@ -1681,6 +1925,7 @@ svg { flex: none; }
       phraseSeg === "fav" ? () => { favorites.splice(i, 1); store.set("favorites", favorites); renderPhrases(); syncResultActions(); } : null)));
   }
   document.querySelectorAll("[data-seg]").forEach(b => b.addEventListener("click", () => { phraseSeg = b.dataset.seg; renderPhrases(); }));
+  $("psearch").addEventListener("input", renderPhrases);
   let hisArmed = 0;
   $("hisClear").addEventListener("click", () => {
     if (!hisArmed) { $("hisClear").textContent = "Дахин дарж баталгаажуулна"; hisArmed = setTimeout(() => { hisArmed = 0; $("hisClear").textContent = "Түүхийг цэвэрлэх"; }, 3000); return; }
@@ -1880,7 +2125,7 @@ svg { flex: none; }
     inp.value = S[prop] || "";
     inp.addEventListener("input", () => {
       S[prop] = inp.value.trim();
-      if (prop === "geminiKey") { S.geminiModel = ""; S.geminiSttModel = ""; }
+      if (prop === "geminiKey") { S.geminiModel = ""; S.geminiSttModel = ""; S.geminiTtsModel = ""; }
       if (!S.engine && S[prop]) S.engine = prop === "apiKey" ? "claude" : "gemini";
       save(); renderSettings();
     });
