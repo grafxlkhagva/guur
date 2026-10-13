@@ -508,7 +508,7 @@ svg { flex: none; }
     <div class="box">
       <button id="wipeBtn" class="danger-btn" type="button">Түүх ба хадгалснаа устгах</button>
     </div>
-    <p class="foot">Түлхүүр, түүх, хадгалсан зүйлс зөвхөн энэ утсанд хадгалагдана. Хувилбар 3.3</p>
+    <p class="foot">Түлхүүр, түүх, хадгалсан зүйлс зөвхөн энэ утсанд хадгалагдана. Хувилбар 3.4</p>
   </div>
 </section>
 
@@ -603,6 +603,7 @@ svg { flex: none; }
     { id: "greet", label: "Мэндчилгээ" },
     { id: "talk", label: "Ойлголцох" },
     { id: "go", label: "Тээвэр" },
+    { id: "beach", label: "Далайн эрэг, аялал" },
     { id: "food", label: "Хоол" },
     { id: "shop", label: "Дэлгүүр" },
     { id: "trade", label: "Бөөний худалдаа" },
@@ -668,6 +669,35 @@ svg { flex: none; }
     ["go", "Бүртгэлийн ширээ хаана байдаг вэ?", "Where is the check-in counter?", "值机柜台在哪里？", "值機櫃檯在哪裡？", "Zhíjī guìtái zài nǎlǐ?"],
     ["go", "Эрээн рүү явмаар байна.", "I want to go to Erenhot.", "我想去二连浩特。", "我想去二連浩特。", "Wǒ xiǎng qù Èrliánhàotè."],
     ["go", "Хөх хот руу явмаар байна.", "I want to go to Hohhot.", "我想去呼和浩特。", "我想去呼和浩特。", "Wǒ xiǎng qù Hūhéhàotè."],
+    ["beach", "Далайн эрэг хаана байдаг вэ?", "Where is the beach?", "海滩在哪里？", "海灘在哪裡？", "Hǎitān zài nǎlǐ?"],
+    ["beach", "Санья хот руу явмаар байна.", "I want to go to Sanya.", "我想去三亚。", "我想去三亞。", "Wǒ xiǎng qù Sānyà."],
+    ["beach", "Хайкоу хот руу явмаар байна.", "I want to go to Haikou.", "我想去海口。", "我想去海口。", "Wǒ xiǎng qù Hǎikǒu."],
+    ["beach", "Энд усанд сэлж болох уу?", "Can I swim here?", "这里可以游泳吗？", "這裡可以游泳嗎？", "Zhèlǐ kěyǐ yóuyǒng ma?"],
+    ["beach", "Өнөөдөр далай аюултай юу?", "Is the sea dangerous today?", "今天海里危险吗？", "今天海裡危險嗎？", "Jīntiān hǎi lǐ wēixiǎn ma?"],
+    ["beach", "Аврагч хаана байна?", "Where is the lifeguard?", "救生员在哪里？", "救生員在哪裡？", "Jiùshēngyuán zài nǎlǐ?"],
+    ["beach", "Наран шарлагын сандал түрээслэхэд хэд вэ?", "How much to rent a beach chair?", "租沙滩椅多少钱？", "租沙灘椅多少錢？", "Zū shātānyǐ duōshǎo qián?"],
+    ["beach", "Шүхэр түрээслэж болох уу?", "Can I rent a sun umbrella?", "可以租遮阳伞吗？", "可以租遮陽傘嗎？", "Kěyǐ zū zhēyángsǎn ma?"],
+    ["beach", "Нарны тос хаана зардаг вэ?", "Where can I buy sunscreen?", "哪里卖防晒霜？", "哪裡賣防曬霜？", "Nǎlǐ mài fángshàishuāng?"],
+    ["beach", "Хувцас солих өрөө хаана байна?", "Where is the changing room?", "更衣室在哪里？", "更衣室在哪裡？", "Gēngyīshì zài nǎlǐ?"],
+    ["beach", "Шүршүүр хаана байна?", "Where is the shower?", "淋浴在哪里？", "淋浴在哪裡？", "Línyù zài nǎlǐ?"],
+    ["beach", "Усанд шумбах аялал байна уу?", "Do you have diving tours?", "有潜水的项目吗？", "有潛水的項目嗎？", "Yǒu qiánshuǐ de xiàngmù ma?"],
+    ["beach", "Шумбах хэрэгсэл түрээслэж болох уу?", "Can I rent snorkeling gear?", "可以租浮潜装备吗？", "可以租浮潛裝備嗎？", "Kěyǐ zū fúqián zhuāngbèi ma?"],
+    ["beach", "Усан онгоцны аялал хэдэн цагт хөдлөх вэ?", "What time does the boat tour leave?", "游船几点出发？", "遊船幾點出發？", "Yóuchuán jǐ diǎn chūfā?"],
+    ["beach", "Арал руу явах завинд хаанаас суух вэ?", "Where do I take the boat to the island?", "去岛上的船在哪里坐？", "去島上的船在哪裡坐？", "Qù dǎo shang de chuán zài nǎlǐ zuò?"],
+    ["beach", "Энэ аялалд юу багтсан бэ?", "What is included in this tour?", "这个行程包括什么？", "這個行程包括什麼？", "Zhège xíngchéng bāokuò shénme?"],
+    ["beach", "Нэг хүнд хэд вэ?", "How much per person?", "一个人多少钱？", "一個人多少錢？", "Yí ge rén duōshǎo qián?"],
+    ["beach", "Хүүхдэд хямдрал байна уу?", "Is there a discount for children?", "儿童有优惠吗？", "兒童有優惠嗎？", "Értóng yǒu yōuhuì ma?"],
+    ["beach", "Орох тасалбар хэд вэ?", "How much is the entrance ticket?", "门票多少钱？", "門票多少錢？", "Ménpiào duōshǎo qián?"],
+    ["beach", "Нар жаргахыг хаанаас харах вэ?", "Where can I watch the sunset?", "在哪里看日落？", "在哪裡看日落？", "Zài nǎlǐ kàn rìluò?"],
+    ["beach", "Миний зургийг авч өгөөч.", "Could you take a photo of me?", "可以帮我拍张照吗？", "可以幫我拍張照嗎？", "Kěyǐ bāng wǒ pāi zhāng zhào ma?"],
+    ["beach", "Скутер хаана түрээслэх вэ?", "Where can I rent a scooter?", "哪里可以租电动车？", "哪裡可以租電動車？", "Nǎlǐ kěyǐ zū diàndòngchē?"],
+    ["beach", "Далайн хоолны зах хаана байдаг вэ?", "Where is the seafood market?", "海鲜市场在哪里？", "海鮮市場在哪裡？", "Hǎixiān shìchǎng zài nǎlǐ?"],
+    ["beach", "Энэ загас нэг жин (500 гр) нь хэд вэ?", "How much is this fish per jin (500 g)?", "这条鱼多少钱一斤？", "這條魚多少錢一斤？", "Zhè tiáo yú duōshǎo qián yì jīn?"],
+    ["beach", "Хавч, сам хорхой байна уу?", "Do you have crab and shrimp?", "有螃蟹和虾吗？", "有螃蟹和蝦嗎？", "Yǒu pángxiè hé xiā ma?"],
+    ["beach", "Үүнийг уураар жигнэж өгнө үү.", "Please steam this for me.", "请帮我清蒸。", "請幫我清蒸。", "Qǐng bāng wǒ qīngzhēng."],
+    ["beach", "Нэг кокос өгнө үү.", "A coconut, please.", "请给我一个椰子。", "請給我一個椰子。", "Qǐng gěi wǒ yí ge yēzi."],
+    ["beach", "Өнөөдөр цаг агаар ямар байх вэ?", "What will the weather be like today?", "今天天气怎么样？", "今天天氣怎麼樣？", "Jīntiān tiānqì zěnmeyàng?"],
+    ["beach", "Хар салхи (тайфун) ирэх үү?", "Is a typhoon coming?", "会有台风吗？", "會有颱風嗎？", "Huì yǒu táifēng ma?"],
     ["food", "Хоёр хүний ширээ байна уу?", "A table for two?", "有两个人的位子吗？", "有兩個人的位子嗎？", "Yǒu liǎng ge rén de wèizi ma?"],
     ["food", "Цэс өгнө үү.", "The menu, please.", "请给我菜单。", "請給我菜單。", "Qǐng gěi wǒ càidān."],
     ["food", "Танай хамгийн алдартай хоол юу вэ?", "What is your most popular dish?", "你们的招牌菜是什么？", "你們的招牌菜是什麼？", "Nǐmen de zhāopái cài shì shénme?"],
